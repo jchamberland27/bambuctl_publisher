@@ -5,10 +5,12 @@ from threading import Thread
 from redis import Redis
 from bambulab_common.printer import Printer
 import bambulab_common.bambu_mqtt as bambu_mqtt
+import bambulab_common.commands as commands
+from send_msg import send_mqtt_msg
 import os
 
 app = Flask(__name__)
-printer_list: dict[Printer] = {}
+printer_list: dict[str, Printer] = {}
 
 
 @app.route("/status")
@@ -23,6 +25,24 @@ def list_printers():
     return {
         "printers": [printer_list[printer].printer_info for printer in printer_list]
     }, 200
+
+
+@app.route("/<target>/print/pause")
+def print_pause(target: str):
+    """Pause a printer"""
+    return send_mqtt_msg(target, commands.PAUSE, printer_list)
+
+
+@app.route("/<target>/print/resume")
+def print_resume(target: str):
+    """Resume a printer"""
+    return send_mqtt_msg(target, commands.RESUME, printer_list)
+
+
+@app.route("/<target>/print/stop")
+def print_stop(target: str):
+    """Stop a printer"""
+    return send_mqtt_msg(target, commands.STOP, printer_list)
 
 
 def build_printer_list(printers, db: Redis) -> Dict[str, Printer]:
