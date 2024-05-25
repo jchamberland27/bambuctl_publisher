@@ -6,11 +6,13 @@ from redis import Redis
 from bambulab_common.printer import Printer
 import bambulab_common.bambu_mqtt as bambu_mqtt
 import bambulab_common.commands as commands
-from send_msg import send_mqtt_msg
+from send_msg import send_mqtt_msg, send_wattbox_msg
+from wattbox import Wattbox
 import os
 
 app = Flask(__name__)
 printer_list: dict[str, Printer] = {}
+wattbox: Wattbox = None
 
 
 @app.route("/status")
@@ -27,10 +29,40 @@ def list_printers():
     }, 200
 
 
+@app.route("/<target>/lights/on")
+def lights_on(target: str):
+    """Turn on the lights on a printer"""
+    return send_mqtt_msg(target, commands.CHAMBER_LIGHT_ON, printer_list)
+
+
+@app.route("/<target>/lights/off")
+def lights_off(target: str):
+    """Turn off the lights on a printer"""
+    return send_mqtt_msg(target, commands.CHAMBER_LIGHT_OFF, printer_list)
+
+
 @app.route("/<target>/print/pause")
 def print_pause(target: str):
     """Pause a printer"""
     return send_mqtt_msg(target, commands.PAUSE, printer_list)
+
+
+@app.route("/<target>/power/on")
+def power_on(target: str):
+    """Power on a printer via Wattbox"""
+    return send_wattbox_msg(target, "POWER_ON", printer_list, wattbox)
+
+
+@app.route("/<target>/power/off")
+def power_off(target: str):
+    """Power on a printer via Wattbox"""
+    return send_wattbox_msg(target, "POWER_OFF", printer_list, wattbox)
+
+
+@app.route("/<target>/power/cycle")
+def power_cycle(target: str):
+    """Power on a printer via Wattbox"""
+    return send_wattbox_msg(target, "POWER_CYCLE", printer_list, wattbox)
 
 
 @app.route("/<target>/print/resume")
@@ -59,6 +91,7 @@ def build_printer_list(printers, db: Redis) -> Dict[str, Printer]:
 def main():
     """Main function"""
     global printer_list
+    global wattbox
     load_dotenv()
 
     print("Setting up Redis and retrieving printers...")
@@ -70,6 +103,9 @@ def main():
 
     print("Building printer list...")
     printer_list = build_printer_list(printers, db)
+
+    print("Setting up Wattbox...")
+    wattbox = Wattbox()
 
     app.run(host="0.0.0.0", port=51295)
 
