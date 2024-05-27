@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 from bambulab_common.printer import Printer
 from bambulab_common.bambu_mqtt import publish_mqtt_message
-from wattbox import Wattbox, control_command
+from wattbox import Wattbox
+from lftp import run_lftp_clean_thread
 
 
 def send_mqtt_msg(
@@ -46,3 +47,14 @@ def send_wattbox_msg(
         else:
             return f"{command} ERROR", rc
     pass
+
+
+def send_lftp_clean_thread(target: str, printer_list: dict[str, Printer]):
+    """Start the LFTP cleaning thread"""
+    if target == "all":
+        run_lftp_clean_thread(printer_list)
+    elif target not in printer_list.keys():
+        return "PRINTER NOT FOUND", 400
+    else:
+        run_lftp_clean_thread({target: printer_list[target]})
+    return "OK", 200

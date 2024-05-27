@@ -6,7 +6,7 @@ from redis import Redis
 from bambulab_common.printer import Printer
 import bambulab_common.bambu_mqtt as bambu_mqtt
 import bambulab_common.commands as commands
-from send_msg import send_mqtt_msg, send_wattbox_msg
+from send_msg import send_mqtt_msg, send_wattbox_msg, send_lftp_clean_thread
 from wattbox import Wattbox
 import os
 
@@ -27,6 +27,12 @@ def list_printers():
     return {
         "printers": [printer_list[printer].printer_info for printer in printer_list]
     }, 200
+
+
+@app.route("/<target>/clean")
+def clean(target: str):
+    """Clean a printer"""
+    return send_lftp_clean_thread(target, printer_list)
 
 
 @app.route("/<target>/lights/on")
