@@ -6,13 +6,13 @@ from lftp import run_lftp_clean_thread
 
 
 def send_mqtt_msg(
-    target: str, command: str, printer_list: dict[str, Printer]
+    target: str, command: dict, printer_list: dict[str, Printer]
 ) -> tuple[str, int]:
     """Send an MQTT message to a printer"""
     if target == "all":
         for printer in printer_list:
             publish_mqtt_message(printer_list[printer], command)
-            return "OK", 200
+        return "OK", 200
     elif target not in printer_list.keys():
         return "PRINTER NOT FOUND", 404
     else:

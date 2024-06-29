@@ -29,6 +29,12 @@ def list_printers():
     }, 200
 
 
+@app.route("/wattbox/list")
+def list_wattbox():
+    """List all wattbox info"""
+    return wattbox.wattbox_info, 200
+
+
 @app.route("/<target>/clean")
 def clean(target: str):
     """Clean a printer"""

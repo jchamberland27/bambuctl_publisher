@@ -44,10 +44,12 @@ class Wattbox:
     def __init__(self):
         """Initializes Wattbox object"""
 
-        self.wattbox_info.ip = os.getenv("WATTBOXIP")
-        self.wattbox_info.username = os.getenv("WATTBOXUSER")
-        self.wattbox_info.password = os.getenv("WATTBOXPASS")
-        self.getInfo(self)
+        self.wattbox_info = WattboxInfo()
+        self.wattbox_info["ip"] = os.getenv("WATTBOXIP")
+        self.wattbox_info["username"] = os.getenv("WATTBOXUSER")
+        self.wattbox_info["password"] = os.getenv("WATTBOXPASS")
+        self.wattbox_info["outlets"] = []
+        self.getInfo()
 
     def getInfo(self) -> list[Outlet]:
         """retireve outlets"""
