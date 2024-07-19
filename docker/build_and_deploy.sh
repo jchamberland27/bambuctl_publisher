@@ -12,6 +12,7 @@ docker stop bambuctl_publisher
 docker rm bambuctl_publisher
 
 # move dockerfile into place
+dp docker_env ../src
 cp Dockerfile ../src
 cd ../src
 
@@ -24,6 +25,7 @@ docker run --name bambuctl_publisher -d -p $1:51295 --env-file docker_env bambuc
 
 #cleanup
 rm Dockerfile
+rm docker_env
 
 # dump out running containers
 echo "Running containers after deployment:"
