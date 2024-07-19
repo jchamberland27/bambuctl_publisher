@@ -1,15 +1,15 @@
 # utility script to build docker image
 echo "Build and deploy bambuctl_publisher image..."
 
-# clear out any previous versions
-docker stop bambuctl_publisher
-docker rm bambuctl_publisher
-
 # check for 3 parameters
 if [ $# -ne 3 ]; then
   echo "Usage: $0 <port> <redis_host> <redis_port>"
   exit 1
 fi
+
+# clear out any previous versions
+docker stop bambuctl_publisher
+docker rm bambuctl_publisher
 
 # move dockerfile into place
 cp Dockerfile ../src
