@@ -2,8 +2,8 @@
 echo "Build and deploy bambuctl_publisher image..."
 
 # check for 3 parameters
-if [ $# -ne 3 ]; then
-  echo "Usage: $0 <port> <redis_host> <redis_port>"
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 <port>"
   exit 1
 fi
 
