@@ -16,7 +16,7 @@ cp Dockerfile ../src
 cd ../src
 
 # build and run docker image on port passed into script
-docker image build -t bambuctl .
+docker image build -t bambuctl_publisher .
 docker run --name bambuctl_publisher -d -p $1:51295 -e REDIS_HOST=$2 -e REDIS_PORT=$3 bambuctl_publisher
 
 #cleanup
