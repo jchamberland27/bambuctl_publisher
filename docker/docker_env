@@ -1,0 +1,4 @@
+REDIS_HOST=example
+REDIS_PORT=example
+WATTBOXIP=example
+WATTBOXUSER=example

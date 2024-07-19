@@ -15,9 +15,12 @@ docker rm bambuctl_publisher
 cp Dockerfile ../src
 cd ../src
 
+#WATTBOXIP=192.168.0.113
+#WATTBOXUSER=admin
+
 # build and run docker image on port passed into script
 docker image build -t bambuctl_publisher .
-docker run --name bambuctl_publisher -d -p $1:51295 -e REDIS_HOST=$2 -e REDIS_PORT=$3 bambuctl_publisher
+docker run --name bambuctl_publisher -d -p $1:51295 --env-file docker_env bambuctl_publisher
 
 #cleanup
 rm Dockerfile
