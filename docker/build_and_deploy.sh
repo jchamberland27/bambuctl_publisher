@@ -5,11 +5,10 @@ echo "Build and deploy bambuctl_publisher image..."
 docker stop bambuctl_publisher
 docker rm bambuctl_publisher
 
-#set $1 to default port if not passed in
-if [ -z "$1" ]
-  then
-    echo "No port argument supplied, using default port 51295"
-    set -- "51295"
+# check for 3 parameters
+if [ $# -ne 3 ]; then
+  echo "Usage: $0 <port> <redis_host> <redis_port>"
+  exit 1
 fi
 
 # move dockerfile into place
@@ -18,7 +17,7 @@ cd ../src
 
 # build and run docker image on port passed into script
 docker image build -t bambuctl .
-docker run --name bambuctl_publisher -d -v bambuctl_publisher:/app/log -p $1:51295 bambuctl_publisher
+docker run --name bambuctl_publisher -d -p $1:51295 -e REDIS_HOST=$2 -e REDIS_PORT=$3 bambuctl_publisher
 
 #cleanup
 rm Dockerfile

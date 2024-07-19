@@ -1,0 +1,9 @@
+Flask==2.2.3
+py-cord
+discordwebhook==1.0.3
+paho_mqtt==1.6.1
+python-dotenv==1.0.1
+redis==5.0.4
+requests==2.25.1
+Werkzeug==2.2.3
+xmltodict==0.13.0
