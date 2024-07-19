@@ -12,7 +12,7 @@ docker stop bambuctl_publisher
 docker rm bambuctl_publisher
 
 # move dockerfile into place
-dp docker_env ../src
+cp docker_env ../src
 cp Dockerfile ../src
 cd ../src
 
