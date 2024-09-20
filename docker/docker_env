@@ -2,3 +2,6 @@ REDIS_HOST=example
 REDIS_PORT=example
 WATTBOXIP=example
 WATTBOXUSER=example
+WATTBOXPASS=example
+WATTBOX_REDIS_IP=example
+WATTBOX_REDIS_PORT=example

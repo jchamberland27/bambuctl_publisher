@@ -6,13 +6,20 @@ from redis import Redis
 from bambulab_common.printer import Printer
 import bambulab_common.bambu_mqtt as bambu_mqtt
 import bambulab_common.commands as commands
-from send_msg import send_mqtt_msg, send_wattbox_msg, send_lftp_clean_thread
+from send_msg import (
+    send_mqtt_msg,
+    send_wattbox_msg,
+    send_lftp_clean_thread,
+    send_wattbox_multi_msg,
+)
 from wattbox import Wattbox
+from wattbox_multi import Wattbox as WattboxMulti
 import os
 
 app = Flask(__name__)
 printer_list: dict[str, Printer] = {}
 wattbox: Wattbox = None
+wm: WattboxMulti = None
 
 
 @app.route("/status")
@@ -62,19 +69,25 @@ def print_pause(target: str):
 @app.route("/<target>/power/on")
 def power_on(target: str):
     """Power on a printer via Wattbox"""
-    return send_wattbox_msg(target, "POWER_ON", printer_list, wattbox)
+    return send_wattbox_multi_msg(target, "POWER_ON", printer_list, wm)
 
 
 @app.route("/<target>/power/off")
 def power_off(target: str):
     """Power on a printer via Wattbox"""
-    return send_wattbox_msg(target, "POWER_OFF", printer_list, wattbox)
+    return send_wattbox_multi_msg(target, "POWER_OFF", printer_list, wm)
 
 
 @app.route("/<target>/power/cycle")
 def power_cycle(target: str):
     """Power on a printer via Wattbox"""
-    return send_wattbox_msg(target, "POWER_CYCLE", printer_list, wattbox)
+    return send_wattbox_multi_msg(target, "POWER_CYCLE", printer_list, wm)
+
+
+@app.route("/<target>/power_multi/cycle")
+def multi_power_cycle(target: str):
+    """Power on a printer via Wattbox"""
+    return send_wattbox_multi_msg(target, "POWER_CYCLE", printer_list, wm)
 
 
 @app.route("/<target>/print/resume")
@@ -87,6 +100,12 @@ def print_resume(target: str):
 def print_stop(target: str):
     """Stop a printer"""
     return send_mqtt_msg(target, commands.STOP, printer_list)
+
+
+@app.route("/watt/dump")
+def watt_dump():
+    """Dump Wattbox info"""
+    return wm.dump(), 200
 
 
 def build_printer_list(printers, db: Redis) -> Dict[str, Printer]:
@@ -104,6 +123,7 @@ def main():
     """Main function"""
     global printer_list
     global wattbox
+    global wm
     load_dotenv()
 
     print("Setting up Redis and retrieving printers...")
@@ -118,6 +138,7 @@ def main():
 
     print("Setting up Wattbox...")
     wattbox = Wattbox()
+    wm = WattboxMulti()
 
     app.run(host="0.0.0.0", port=51295)
 
