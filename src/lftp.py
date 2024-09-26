@@ -3,7 +3,6 @@
 
 import subprocess
 from threading import Thread
-from typing import List
 
 from bambulab_common.printer import Printer
 
